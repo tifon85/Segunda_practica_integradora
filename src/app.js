@@ -48,12 +48,17 @@ socketServer.on("connection", async (socket) => {
 
     //socket productos
     socketServer.emit("products", products);
+    socketServer.emit("chat", messages);
 
     socket.on("CreateProduct", async (value) => {
         await prodManager.addProducts(value)
+        const products = await prodManager.getProducts()
+        socketServer.emit("products", products);
     });
     socket.on("deleteId", async (value) => {
         await prodManager.deleteProduct(value)
+        const products = await prodManager.getProducts()
+        socketServer.emit("products", products);
     });
 
     //socket chat
@@ -62,8 +67,8 @@ socketServer.on("connection", async (socket) => {
         socket.emit("connected");
     });
     socket.on("message", async (infoMessage) => {
-        console.log(infoMessage)
         await messageManager.createMessage(infoMessage)
+        const messages = await messageManager.getMessage()
         socketServer.emit("chat", messages);
     });
 

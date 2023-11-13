@@ -1,4 +1,3 @@
-//console.log("Probando websocket");
 const socketClient = io();
 
 const formAlta = document.getElementById("formularioAltaProducto");
