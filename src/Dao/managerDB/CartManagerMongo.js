@@ -16,8 +16,7 @@ export class CartManager{
     getProductsByCart = async (idCart) => {
         try{
             const cart = await cartsModel.findById(idCart).populate("products.product", ["name", "price"]);
-            return cart
-    return response;
+            return cart.products
         }catch(error){
             throw new Error(error.message)
         }
@@ -43,8 +42,49 @@ export class CartManager{
     //funcion para traer carrito por id
     getCartByID = async (id) => {
         try{
-            const cart = await cartsModel.findById(id)
+            const cart = await cartsModel.findById(id).populate("products.product")
             return cart
+        }catch(error){
+            throw new Error(error.message)
+        }
+    }
+
+    //función para eliminar un producto del carrito
+    deleteProductToCart = async (cart, idProduct) => {
+        try{
+            cart.products = cart.products.filter(product => product.id!=idProduct)
+            return cart.save();
+        }catch(error){
+            throw new Error(error.message)
+        }
+    }
+
+    //Actualiza los productos del carrito
+    updateProductsToCart = async (id, updatedCart) => {
+        try{
+            await cartsModel.updateOne({ _id: id }, updatedCart);
+        }catch (error){
+            throw new Error(error.message)
+        }
+    }
+
+    updateQuantityProductsCart = async (cart,pid,cantidad) => {
+        try{
+            const productIndex = cart.products.findIndex((p) => p.product.equals(pid));
+            if (productIndex != -1) {
+                cart.products[productIndex].quantity=cantidad;
+            }
+            await cartsModel.updateOne({ _id: cart.id }, updatedCart);
+        }catch (error){
+            throw new Error(error.message)
+        }
+    }
+
+    //función para eliminar todos los productos de un carrito
+    deleteAllProductsToCart = async (cart) => {
+        try{
+            cart.products = []
+            return cart.save();
         }catch(error){
             throw new Error(error.message)
         }

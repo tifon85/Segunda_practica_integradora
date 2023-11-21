@@ -47,5 +47,80 @@ router.post('/:cid/product/:pid', async (req,res) => {
     }
 })
 
+router.delete('/:cid/products/:pid', async (req,res) => {
+    const cid = req.params.cid
+    const pid = req.params.pid
+    try{
+        const cart = await cartManager.getCartByID(cid)
+        if(!cart){
+            res.status(404).json({ message: "No existe el carrito" })
+        }else{
+            const product = cart.products.find(product => product._id==pid)
+            if(!product){
+                res.status(404).json({ message: "El producto no está en el carrito" })
+            }else{
+                await cartManager.deleteProductToCart(cart,pid)
+                res.status(200).json({ message: "Producto eliminado del carrito", cart })
+            }
+        }
+    }catch(error){
+        res.status(500).json({ message: error.message })
+    }
+})
+
+router.put('/:cid', async (req,res) => {
+    const cid = req.params.cid
+    const products = req.body
+    try{
+        const cart = await cartManager.getCartByID(cid)
+        if(!cart){
+            res.status(404).json({ message: "No existe el carrito" })
+        }else{
+            cart.products=products
+            await cartManager.updateProductsToCart(cid, cart)
+            res.status(200).json({ message: "Carrito vacio", cart })
+        }
+    }catch(error){
+        res.status(500).json({ message: error.message })
+    }
+})
+
+router.put('/:cid/products/:pid', async (req,res) => {
+    const cid = req.params.cid
+    const pid = req.params.pid
+    const cantidad = req.body
+    try{
+        const cart = await cartManager.getCartByID(cid)
+        if(!cart){
+            res.status(404).json({ message: "No existe el carrito" })
+        }else{
+            const product = cart.products.find(product => product._id==pid)
+            if(!product){
+                res.status(404).json({ message: "El producto no está en el carrito" })
+            }else{
+                await cartManager.updateQuantityProductsCart(cart,pid,cantidad)
+                res.status(200).json({ message: "Cantidad del producto actualizado en el carrito", cart })
+            }
+        }
+    }catch(error){
+        res.status(500).json({ message: error.message })
+    }
+})
+
+router.delete('/:cid', async (req,res) => {
+    const cid = req.params.cid
+    try{
+        const cart = await cartManager.getCartByID(cid)
+        if(!cart){
+            res.status(404).json({ message: "No existe el carrito" })
+        }else{
+            await cartManager.deleteAllProductsToCart(cart)
+            res.status(200).json({ message: "Carrito vacio", cart })
+        }
+    }catch(error){
+        res.status(500).json({ message: error.message })
+    }
+})
+
 
 export default router;

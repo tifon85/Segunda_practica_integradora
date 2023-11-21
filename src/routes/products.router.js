@@ -7,10 +7,20 @@ const prodManager = new ProductManager()
 
 //OK
 router.get('/', async (req,res) => {
-    const limit = req.query.limit
+    const page = req.query.page ||1
+    const limit = req.query.limit ||10
+    const query = req.query.query
+    const sort = req.query.sort
+
+    const params = { limit, page, query, sort }
+
+    if (req.params.sort) {
+        params.sort = { username: 1 }
+    }
+
     try{
-        const products = await prodManager.getProducts()
-        limit ? res.status(200).send(products.filter(product => product.id <= limit)) : res.status(200).send(products)
+        const products = await prodManager.getProducts(params)
+        res.status(200).json({ message: "Products", products })
     }catch(error){
         res.status(500).json({ message: error.message })
     }
