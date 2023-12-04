@@ -1,0 +1,10 @@
+
+<h2>LISTA DE PRODUCTOS</h2>
+
+{{#if products.length }}
+    {{#each products}}
+        <h3>Producto:{{products.product.title}} - cantidad:{{products.quantity}} - code:{{products.product.code}} - id:{{products.product._id}}</h3>
+    {{/each}}
+{{else}}
+    <p>No products Available</p>
+{{/if}}

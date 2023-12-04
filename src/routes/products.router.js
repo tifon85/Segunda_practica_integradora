@@ -7,16 +7,12 @@ const prodManager = new ProductManager()
 
 //OK
 router.get('/', async (req,res) => {
-    const page = req.query.page ||1
-    const limit = req.query.limit ||10
-    const query = req.query.query
+    const page = parseInt(req.query.page)
+    const limit = parseInt(req.query.limit)
+    let query = req.query.query
     const sort = req.query.sort
 
-    const params = { limit, page, query, sort }
-
-    if (req.params.sort) {
-        params.sort = { username: 1 }
-    }
+    const params = { page, limit, query, sort }
 
     try{
         const products = await prodManager.getProducts(params)
@@ -73,13 +69,12 @@ router.post('/', async (req,res) => {
         if(!product.title || !product.description || !product.price || !product.category || !product.code || !product.stock){
             res.status(404).json({ message: "Todos los campos son obligatorios" })
         }
-        const products = await prodManager.getProducts()
-        const yaEsta = products.find(item => item.code==product.code)
-        if(yaEsta){
-            res.status(404).json({ message: "Ya existe un producto registrado con ese codigo" })
-        }else{
+        const yaEsta = await prodManager.existProductCode(product.code)
+        if(yaEsta.length == 0){
             await prodManager.addProducts(product)
             res.status(200).json({ message: "Producto agregado" })
+        }else{
+            res.status(404).json({ message: "Ya existe un producto registrado con ese codigo" })
         }
     }catch(error){
         res.status(500).json({ message: error.message })

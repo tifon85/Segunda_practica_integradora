@@ -8,6 +8,7 @@ import { engine } from 'express-handlebars'
 import { Server } from 'socket.io'
 import { ProductManager } from './Dao/managerDB/ProductManagerMongo.js'
 import { MessageManager } from './Dao/managerDB/MessageManagerMongo.js'
+import { CartManager } from './Dao/managerDB/CartManagerMongo.js'
 import "./db/configDB.js"
 
 const app = express()
@@ -39,11 +40,12 @@ const socketServer = new Server(httpServer)
 
 const prodManager = new ProductManager()
 const messageManager = new MessageManager()
+const cartManager = new CartManager()
 
 //socket productos
 socketServer.on("connection", async (socket) => {
 
-    const products = await prodManager.getProducts()
+    const products = await prodManager.getProducts({})
     const messages = await messageManager.getMessage()
 
     //socket productos
@@ -52,12 +54,12 @@ socketServer.on("connection", async (socket) => {
 
     socket.on("CreateProduct", async (value) => {
         await prodManager.addProducts(value)
-        const products = await prodManager.getProducts()
+        const products = await prodManager.getProducts({})
         socketServer.emit("products", products);
     });
     socket.on("deleteId", async (value) => {
         await prodManager.deleteProduct(value)
-        const products = await prodManager.getProducts()
+        const products = await prodManager.getProducts({})
         socketServer.emit("products", products);
     });
 
@@ -70,6 +72,16 @@ socketServer.on("connection", async (socket) => {
         await messageManager.createMessage(infoMessage)
         const messages = await messageManager.getMessage()
         socketServer.emit("chat", messages);
+    });
+
+    //socket productos carrito
+    socket.on("newCart", async () => {
+        const idCart = await cartManager.createCart()
+        socket.emit("cartID", idCart);
+    });
+
+    socket.on("addProduct", async (infoProduct) => {
+        await cartManager.addProductToCart(infoProduct.cartid, infoProduct.productid)
     });
 
   });

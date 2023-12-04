@@ -11,11 +11,36 @@ export class ProductManager {
         }
     }
 
-    //función para obtener todos los productos existentes
     getProducts = async (obj) => {
-        const {query, limit, page, sort} = obj
+
+        let { limit, page, sort, query } = obj
+
+        if(!limit){
+            limit=10
+        }
+
+        if(!page){
+            page=1
+        }
+
+        if (sort=='asc' || sort==1) {
+            sort = { price: 1 }
+        }else{
+            if(sort=='desc' || sort==-1){
+                sort = { price: -1 }
+            }else{
+                sort=null
+            }
+        }
+    
+        if(query){
+            query={query}
+        }else{
+            query={}
+        }
+
         try{
-            const response = await productsModel.aggregate([{ $sort : {precio:sort} }]).paginate({query}, {limit, page})
+            const response = await productsModel.paginate(query, {limit, page, sort})
             const products = {
                 payload: response.docs,
                 totalPages: response.totalPages,
@@ -41,6 +66,16 @@ export class ProductManager {
     getProductByID = async (id) => {
         try{
             const product = await productsModel.findById(id)
+            return product
+        }catch(error){
+            throw new Error(error.message)
+        }
+    }
+
+    //funcion que verifica si existe producto con el codigo a registrar
+    existProductCode = async (code) => {
+        try{
+            const product = await productsModel.find({code:code})
             return product
         }catch(error){
             throw new Error(error.message)

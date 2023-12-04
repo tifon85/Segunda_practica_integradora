@@ -6,7 +6,8 @@ export class CartManager{
     createCart = async () => {
         try{
             const newCart = { products: [] };
-            await cartsModel.create(newCart);
+            const cart = await cartsModel.create(newCart);
+            return cart._id.toString()
         }catch(error){
             throw new Error(error.message)
         }
@@ -52,7 +53,7 @@ export class CartManager{
     //función para eliminar un producto del carrito
     deleteProductToCart = async (cart, idProduct) => {
         try{
-            cart.products = cart.products.filter(product => product.id!=idProduct)
+            cart.products = cart.products.filter(product => product.product._id!=idProduct)
             return cart.save();
         }catch(error){
             throw new Error(error.message)
@@ -60,21 +61,9 @@ export class CartManager{
     }
 
     //Actualiza los productos del carrito
-    updateProductsToCart = async (id, updatedCart) => {
+    updateCart = async (id, updatedCart) => {
         try{
             await cartsModel.updateOne({ _id: id }, updatedCart);
-        }catch (error){
-            throw new Error(error.message)
-        }
-    }
-
-    updateQuantityProductsCart = async (cart,pid,cantidad) => {
-        try{
-            const productIndex = cart.products.findIndex((p) => p.product.equals(pid));
-            if (productIndex != -1) {
-                cart.products[productIndex].quantity=cantidad;
-            }
-            await cartsModel.updateOne({ _id: cart.id }, updatedCart);
         }catch (error){
             throw new Error(error.message)
         }

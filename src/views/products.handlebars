@@ -1,0 +1,27 @@
+
+<h2>LISTA DE PRODUCTOS</h2>
+
+<h4>Página: {{page}} de {{totalPages}}</h4>
+{{#if products.length }}
+    {{#each products}}
+      <div id="product">
+          <h3>Producto:{{products.product.title}} - stock:{{products.product.stock}} - code:{{products.product.code}} - id:{{products.product.id}}</h3>
+          <button type="submit" id="addProduct" value="{{products.product._id}}"><i>Agregar al carrito</i></button>
+      </div>
+    {{/each}}
+{{else}}
+    <p>No products Available</p>
+{{/if}}
+
+{{#if hasPrevPage }}
+  <a href="{{next}}">Página previa</a>
+{{/if}}
+
+{{#if hasNextPage }}
+  <a href="{{prev}}">Página siguiente</a>
+{{/if}} 
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>
+
+
