@@ -48,8 +48,9 @@ socketServer.on("connection", async (socket) => {
     const products = await prodManager.getProducts({})
     const messages = await messageManager.getMessage()
 
+    console.log(1)
     //socket productos
-    socketServer.emit("products", products);
+    socketServer.emit("products", products.payload);
     socketServer.emit("chat", messages);
 
     socket.on("CreateProduct", async (value) => {
@@ -81,6 +82,8 @@ socketServer.on("connection", async (socket) => {
     });
 
     socket.on("addProduct", async (infoProduct) => {
+        console.log(infoProduct)
+        console.log(2)
         await cartManager.addProductToCart(infoProduct.cartid, infoProduct.productid)
     });
 
