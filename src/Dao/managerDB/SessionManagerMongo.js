@@ -5,8 +5,8 @@ export class SessionManager{
     //funcion para crear el carrito vacio
     createUser = async (datosUser) => {
         try{
-            const newUser = datosUser;
-            const user = await sessionsModel.create(newUser);
+            const response = await sessionsModel.create(datosUser);
+            return response;
         }catch(error){
             throw new Error(error.message)
         }

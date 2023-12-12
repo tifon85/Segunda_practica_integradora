@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const URI =
+export const URI =
   "mongodb+srv://ntenconi:Gyb5kiAGuKHuOEcz@cluster0.7cnqumt.mongodb.net/ecommerce?retryWrites=true&w=majority";
 
 mongoose

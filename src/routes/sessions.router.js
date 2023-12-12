@@ -20,34 +20,48 @@ sessionRouter.get('/', (req, res) => {
   })
   
   sessionRouter.post('/register', async (req, res) => {
-    const user = await userModel.create(req.body)
-  
-    return res.redirect('/login')
-    //return res.status(201).json(user)
+    const { first_name, last_name, email, password } = req.body;
+    if (!first_name || !last_name || !email || !password) {
+      return res.status(400).json({ message: "Todos los campos son requeridos" });
+    }
+    try {
+      const createdUser = await sessionManager.createUser(req.body);
+      res.status(200).json({ message: "User created", user: createdUser });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
   })
   
   sessionRouter.post('/login', async (req, res) => {
-    let user = await sessionManager.getUserByEmail(req.body.email)
-  
-    if (!user) {
-      return res.status(401).json({
-        error: 'El usuario no existe en el sistema'
-      })
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: "Todos los campos son requeridos" });
     }
-  
-    if (user.password !== req.body.password) {
-      return res.status(401).json({
-        error: 'Datos incorrectos'
-      })
+    try {
+      const user = await sessionManager.getUserByEmail(email);
+      if (!user) {
+        return res.redirect("/register");
+      }
+      const isPasswordValid = password === user.password;
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: "Password incorrecta" });
+      }
+      const sessionInfo =
+        email === "adminCoder@coder.com" && password === "adminCod3r123"
+          ? { email, first_name: user.first_name, isAdmin: true }
+          : { email, first_name: user.first_name, isAdmin: false };
+      req.session.user = sessionInfo;
+      res.redirect("/profile");
+    } catch (error) {
+      res.status(500).json({ error });
     }
-  
-    user = user.toObject()
-  
-    delete user.password
-  
-    req.session.user = user
-    
-    return res.redirect('/products')
+
   })
+
+  router.get("/logout", (req, res) => {
+    req.session.destroy(() => {
+      res.redirect("/login");
+    });
+  });
   
   module.exports = sessionRouter

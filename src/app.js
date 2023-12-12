@@ -9,23 +9,23 @@ import { Server } from 'socket.io'
 import { ProductManager } from './Dao/managerDB/ProductManagerMongo.js'
 import { MessageManager } from './Dao/managerDB/MessageManagerMongo.js'
 import { CartManager } from './Dao/managerDB/CartManagerMongo.js'
-import "./db/configDB.js"
+import { URI } from "./db/configDB.js"
 import session from 'express-session'
 
 const app = express()
 const port = 8080
 
-app.use(cookieParser('secretkey'))
+app.use(cookieParser("SecretCookie"))
 
-app.use(session({
-    store: MongoStore.create({
-      mongoUrl: MONGODB_CONNECT,
-      ttl: 15
-    }),
-    secret: 'secretSession',
-    resave: true,
-    saveUninitialized: true
-  }))
+app.use(
+    session({
+        store: new MongoStore({
+            mongoUrl: URI,
+      }),
+      secret: "secretSession",
+      cookie: { maxAge: 60000 },
+    })
+  );
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))

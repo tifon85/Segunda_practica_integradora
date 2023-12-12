@@ -1,11 +1,13 @@
 import { Router } from "express"
 import { ProductManager } from '../Dao/managerDB/ProductManagerMongo.js'
 import { CartManager } from '../Dao/managerDB/CartManagerMongo.js'
+import { SessionManager } from '../Dao/managerDB/SessionManagerMongo.js'
 
 const router = Router()
 
 const prodManager = new ProductManager()
 const cartManager = new CartManager()
+const sessionManager = new SessionManager()
 //funcion para mostrar productos desafio anterior
 /*router.get('/products', async (req,res) => {
     const products = await prodManager.getProducts()
@@ -21,13 +23,27 @@ const sessionMiddleware = (req, res, next) => {
     return next()
 }
 
-router.get('/register', sessionMiddleware, (req, res) => {
-    return res.render('register')
+router.get('/register', sessionMiddleware, async (req, res) => {
+    if (req.session.user) {
+        return res.redirect("/profile");
+    }
+    res.render("register");
 })
 
 router.get('/login', sessionMiddleware, (req, res) => {
-    return res.render('login')
+    if (req.session.user) {
+        return res.redirect("/profile");
+    }
+    res.render("login");
 })
+
+router.get("/profile", sessionMiddleware, (req, res) => {
+    if (!req.session.user) {
+      return res.redirect("/login");
+    }
+    console.log(req.session.user);
+    res.render("profile", { user: req.session.user });
+});  
 
 router.get('/products', sessionMiddleware, async (req,res) => {
     if (!req.session.user) {

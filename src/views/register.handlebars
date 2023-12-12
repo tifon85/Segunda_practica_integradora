@@ -1,12 +1,9 @@
 <h2>Registro</h2>
 
-<form action="/api/sessions/register" method="POST">
-  Nombre: <input type="text" name="name"><br><br>
-  Apellido: <input type="text" name="lastname"><br><br>
-  Email: <input type="text" name="email"><br><br>
-  Edad: <input type="text" name="age"><br><br>
-  Contraseña: <input type="password" name="password"><br><br>
-
-  <input type="submit" value="Registrar">
-
+<form action="/api/sessions/register" method="post">
+    First Name: <input type="text" name="first_name" id="first_name">
+    Last Name: <input type="text" name="last_name" id="last_name">
+    Email: <input type="email" name="email" id="email">
+    Password: <input type="password" name="password" id="password">
+    <input type="submit" value="Sign Up">
 </form>
