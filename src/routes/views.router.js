@@ -13,7 +13,27 @@ const cartManager = new CartManager()
     res.render("home", { products })
 })*/
 
-router.get('/products', async (req,res) => {
+const sessionMiddleware = (req, res, next) => {
+    if (req.session.user) {
+      return res.redirect('/products')
+    }
+  
+    return next()
+}
+
+router.get('/register', sessionMiddleware, (req, res) => {
+    return res.render('register')
+})
+
+router.get('/login', sessionMiddleware, (req, res) => {
+    return res.render('login')
+})
+
+router.get('/products', sessionMiddleware, async (req,res) => {
+    if (!req.session.user) {
+        return res.redirect('/login')
+    }
+
     const page = parseInt(req.query.page)
     const limit = parseInt(req.query.limit)
     let query = req.query.query
@@ -33,7 +53,11 @@ router.get('/products', async (req,res) => {
 })
 
 //funcion para mostrar los productos de un carrito
-router.get('/carts/:cid', async (req,res) => {
+router.get('/carts/:cid', sessionMiddleware, async (req,res) => {
+    if (!req.session.user) {
+        return res.redirect('/login')
+    }
+
     const cid = req.params.cid
     try{
         const cart = await cartManager.getCartByID(cid)
@@ -58,6 +82,6 @@ router.get('/realtimeproducts', async (req,res) => {
 //funcion para mostrar chat en tiempo real
 router.get("/chat", (req, res) => {
     res.render("chat");
-  });
+});
 
 export default router

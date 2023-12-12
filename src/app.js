@@ -10,10 +10,22 @@ import { ProductManager } from './Dao/managerDB/ProductManagerMongo.js'
 import { MessageManager } from './Dao/managerDB/MessageManagerMongo.js'
 import { CartManager } from './Dao/managerDB/CartManagerMongo.js'
 import "./db/configDB.js"
+import session from 'express-session'
 
 const app = express()
 const port = 8080
 
+app.use(cookieParser('secretkey'))
+
+app.use(session({
+    store: MongoStore.create({
+      mongoUrl: MONGODB_CONNECT,
+      ttl: 15
+    }),
+    secret: 'secretSession',
+    resave: true,
+    saveUninitialized: true
+  }))
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
@@ -30,6 +42,7 @@ app.use('/api/products',productsRouter)
 app.use('/api/carts',cartsRouter)
 app.use('/api/messages',messagesRouter)
 app.use('/api/views',viewsRouter)
+app.use('/api/sessions',viewsRouter)
 
 const httpServer = app.listen(port,(error)=>{
     if(error) console.log(error)
