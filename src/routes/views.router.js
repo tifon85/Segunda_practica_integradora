@@ -62,19 +62,16 @@ router.get('/products', async (req,res) => {
 
 //funcion para mostrar los productos de un carrito
 router.get('/carts/:cid', async (req,res) => {
-    if (!req.session.user) {
+    /*if (!req.session.user) {
         return res.redirect('/login')
-    }
+    }*/
 
     const cid = req.params.cid
     try{
-        const cart = await cartManager.getCartByID(cid)
-        if(!cart){
+        const products = await cartManager.getProductsByCart(cid)
+        if(!products){
             res.status(404).json({ message: "No existe el carrito" })
         }else{
-            console.log(cart.products)
-            const products = cart.products.map(doc => doc.toObject())
-            console.log(products)
             res.render("cart", { products })
         }
     }catch(error){

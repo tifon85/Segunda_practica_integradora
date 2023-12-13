@@ -2,8 +2,6 @@ const socketClient = io();
 
 const addToCart = document.getElementById("addToCart");
 const inputIdProduct = document.getElementById("id");
-
-console.log(inputIdProduct)
 const productsView = document.getElementById("productsView");
 
 let cart

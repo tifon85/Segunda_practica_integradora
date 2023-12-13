@@ -102,4 +102,9 @@ socketServer.on("connection", async (socket) => {
         await cartManager.addProductToCart(infoProduct.cartid, infoProduct.productid)
     });
 
+    socket.on("getCartProducts", async (idCart) => {
+        const products = await cartManager.getProductsByCart(idCart)
+        socket.emit("productsCart", products);
+    });
+
   });

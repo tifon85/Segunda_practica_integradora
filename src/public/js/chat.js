@@ -55,5 +55,5 @@ socketClient.on("chat", (messages) => {
       return `<p>${m.user}: ${m.message}</p>`;
     })
     .join(" ");
-  divChat.innerHTML = chat;
+    divChat.innerHTML = chat;
 });

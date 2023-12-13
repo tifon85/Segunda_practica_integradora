@@ -17,7 +17,8 @@ export class CartManager{
     getProductsByCart = async (idCart) => {
         try{
             const cart = await cartsModel.findById(idCart).populate("products.product", ["name", "price"]);
-            return cart.products
+            const products = cart.products.map((p) => p.toObject())
+            return products
         }catch(error){
             throw new Error(error.message)
         }

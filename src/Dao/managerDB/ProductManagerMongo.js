@@ -11,38 +11,31 @@ export class ProductManager {
         }
     }
 
-    getProducts = async (obj) => {
-
-        let { limit, page, sort, query } = obj
-
-        if(!limit){
-            limit=10
-        }
-
-        if(!page){
-            page=1
-        }
-
-        if (sort=='asc' || sort==1) {
-            sort = { price: 1 }
-        }else{
-            if(sort=='desc' || sort==-1){
-                sort = { price: -1 }
-            }else{
-                sort=null
-            }
-        }
-    
-        if(query){
-            query={query}
-        }else{
-            query={}
-        }
+    getProducts = async (query) => {
 
         try{
-            const response = await productsModel.paginate(query, {limit, page, sort})
+            const limit = query.limit || 10
+            const page = query.page || 1
+            let categoryQuery = {}
+            let stockQuery = {}
+            const sortOption = {}
+
+            if(query.category){
+                categoryQuery = { category: query.category }
+            }
+            if(query.stock){
+                stockQuery = { $and: [{ stock: { $existe: true } }, { stock: { $ne: 0 } } ] }
+            }
+            if(query.sort === 'asc'){
+                sortOption.price = 1
+            }
+            if(query.sort === 'desc'){
+                sortOption.price = -1
+            }
+
+            const response = await productsModel.paginate( { ...categoryQuery, ...stockQuery }, { limit, page, sort: sortOption })
             const products = {
-                payload: response.docs,
+                payload: response.docs.map((doc) => doc.toObject()),
                 totalPages: response.totalPages,
                 prevPage: response.prevPage,
                 nextPage: response.nextPage,
@@ -58,7 +51,7 @@ export class ProductManager {
             };
             return products;
         }catch(error){
-            throw new Error(error.message)
+            throw new Error(error.message) 
         }
     }
 
