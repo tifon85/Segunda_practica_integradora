@@ -51,7 +51,6 @@ router.get('/products', async (req,res) => {
 
     try{
         let products = await prodManager.getProducts(params)
-        products = products.docs
         console.log(products)
         res.render("products", { products })
     }catch(error){

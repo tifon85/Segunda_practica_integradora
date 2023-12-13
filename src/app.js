@@ -63,9 +63,9 @@ socketServer.on("connection", async (socket) => {
     const products = await prodManager.getProducts({})
     const messages = await messageManager.getMessage()
 
-    console.log(1)
+    console.log(products)
     //socket productos
-    socketServer.emit("products", products.payload);
+    socketServer.emit("products", products);
     socketServer.emit("chat", messages);
 
     socket.on("CreateProduct", async (value) => {

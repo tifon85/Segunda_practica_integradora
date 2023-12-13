@@ -16,18 +16,6 @@ socketClient.on("cartID", (idCart) => {
   cart=idCart
 });
 
-socketClient.on("products", (prods) => {
-  const products = prods.map((p) =>{
-    return `<h3>Producto:${p.title} - stock:${p.stock} - code:${p.code} - id:${p._id}</h3>
-    <form id="addToCart">
-        <input type="hidden" id="id" value=${p._id}>
-        <input type="submit" value="Agregar al carrito">
-    </form>`;
-  })
-  .join(" ");
-  productsView.innerHTML = products;
-});
-
 addToCart.onsubmit = (e) => {
   e.preventDefault();
   const infoProduct = {
