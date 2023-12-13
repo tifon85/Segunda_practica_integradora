@@ -10,7 +10,9 @@ import { ProductManager } from './Dao/managerDB/ProductManagerMongo.js'
 import { MessageManager } from './Dao/managerDB/MessageManagerMongo.js'
 import { CartManager } from './Dao/managerDB/CartManagerMongo.js'
 import { URI } from "./db/configDB.js"
-import session from 'express-session'
+import session from "express-session";
+import cookieParser from "cookie-parser";
+import MongoStore from "connect-mongo";
 
 const app = express()
 const port = 8080

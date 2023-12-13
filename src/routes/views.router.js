@@ -15,29 +15,21 @@ const sessionManager = new SessionManager()
     res.render("home", { products })
 })*/
 
-const sessionMiddleware = (req, res, next) => {
-    if (req.session.user) {
-      return res.redirect('/products')
-    }
-  
-    return next()
-}
-
-router.get('/register', sessionMiddleware, async (req, res) => {
+router.get('/register', async (req, res) => {
     if (req.session.user) {
         return res.redirect("/profile");
     }
     res.render("register");
 })
 
-router.get('/login', sessionMiddleware, (req, res) => {
+router.get('/login', (req, res) => {
     if (req.session.user) {
         return res.redirect("/profile");
     }
     res.render("login");
 })
 
-router.get("/profile", sessionMiddleware, (req, res) => {
+router.get("/profile", (req, res) => {
     if (!req.session.user) {
       return res.redirect("/login");
     }
@@ -45,10 +37,10 @@ router.get("/profile", sessionMiddleware, (req, res) => {
     res.render("profile", { user: req.session.user });
 });  
 
-router.get('/products', sessionMiddleware, async (req,res) => {
-    if (!req.session.user) {
+router.get('/products', async (req,res) => {
+    /*if (!req.session.user) {
         return res.redirect('/login')
-    }
+    }*/
 
     const page = parseInt(req.query.page)
     const limit = parseInt(req.query.limit)
@@ -69,7 +61,7 @@ router.get('/products', sessionMiddleware, async (req,res) => {
 })
 
 //funcion para mostrar los productos de un carrito
-router.get('/carts/:cid', sessionMiddleware, async (req,res) => {
+router.get('/carts/:cid', async (req,res) => {
     if (!req.session.user) {
         return res.redirect('/login')
     }
