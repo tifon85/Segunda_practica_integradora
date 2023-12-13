@@ -1,13 +1,14 @@
 
 <h2>LISTA DE PRODUCTOS</h2>
-
-{{#if products.length }}
-    {{#each products}}
-        <h3>Producto:{{products.product.title}} - cantidad:{{products.quantity}} - code:{{products.product.code}} - id:{{products.product._id}}</h3>
-    {{/each}}
-{{else}}
-    <p>No products Available</p>
-{{/if}}
+<div id="productsView">
+    {{#if products.length }}
+        {{#each products}}
+            <h3>Producto:{{product.title}} - cantidad:{{quantity}} - precio:{{product.price}}</h3>
+        {{/each}}
+    {{else}}
+        <p>No products Available</p>
+    {{/if}}
+</div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/cartProducts.js"></script>

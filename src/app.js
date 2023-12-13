@@ -103,6 +103,7 @@ socketServer.on("connection", async (socket) => {
     });
 
     socket.on("getCartProducts", async (idCart) => {
+        console.log(idCart)
         const products = await cartManager.getProductsByCart(idCart)
         socket.emit("productsCart", products);
     });

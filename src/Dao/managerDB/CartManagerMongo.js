@@ -16,7 +16,7 @@ export class CartManager{
     //funcion para obtener todos los productos de un carrito indicado
     getProductsByCart = async (idCart) => {
         try{
-            const cart = await cartsModel.findById(idCart).populate("products.product", ["name", "price"]);
+            const cart = await cartsModel.findById(idCart).populate("products.product", ["title", "price"]);
             const products = cart.products.map((p) => p.toObject())
             return products
         }catch(error){
