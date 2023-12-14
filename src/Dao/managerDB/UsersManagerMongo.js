@@ -1,11 +1,12 @@
-import { sessionsModel } from "../../db/models/sessions.model.js";
+import { UsersModel } from "../../db/models/users.model.js"
 
-export class SessionManager{
+export class UserManager{
 
     //funcion para crear el carrito vacio
     createUser = async (datosUser) => {
         try{
-            const response = await sessionsModel.create(datosUser);
+            console.log(datosUser)
+            const response = await UsersModel.create(datosUser);
             return response;
         }catch(error){
             throw new Error(error.message)
@@ -15,7 +16,7 @@ export class SessionManager{
     //funcion para traer carrito por id
     getUserByEmail = async (email) => {
         try{
-            const user = await sessionsModel.findOne({ email })
+            const user = await UsersModel.findOne({ email })
             return user
         }catch(error){
             throw new Error(error.message)

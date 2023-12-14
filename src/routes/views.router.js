@@ -1,13 +1,13 @@
 import { Router } from "express"
 import { ProductManager } from '../Dao/managerDB/ProductManagerMongo.js'
 import { CartManager } from '../Dao/managerDB/CartManagerMongo.js'
-import { SessionManager } from '../Dao/managerDB/SessionManagerMongo.js'
+import { UserManager } from '../Dao/managerDB/UsersManagerMongo.js'
 
 const router = Router()
 
 const prodManager = new ProductManager()
 const cartManager = new CartManager()
-const sessionManager = new SessionManager()
+const userManager = new UserManager()
 //funcion para mostrar productos desafio anterior
 /*router.get('/products', async (req,res) => {
     const products = await prodManager.getProducts()
@@ -17,42 +17,34 @@ const sessionManager = new SessionManager()
 
 router.get('/register', async (req, res) => {
     if (req.session.user) {
-        return res.redirect("/profile");
+        return res.redirect("http://localhost:8080/api/views/products");
     }
     res.render("register");
 })
 
 router.get('/login', (req, res) => {
     if (req.session.user) {
-        return res.redirect("/profile");
+        return res.redirect("http://localhost:8080/api/views/products");
     }
     res.render("login");
 })
 
 router.get("/profile", (req, res) => {
     if (!req.session.user) {
-      return res.redirect("/login");
+      return res.redirect("http://localhost:8080/api/views/login");
     }
     console.log(req.session.user);
     res.render("profile", { user: req.session.user });
-});  
+  });
 
 router.get('/products', async (req,res) => {
-    /*if (!req.session.user) {
-        return res.redirect('/login')
-    }*/
-
-    const page = parseInt(req.query.page)
-    const limit = parseInt(req.query.limit)
-    let query = req.query.query
-    const sort = req.query.sort
-
-    const params = { page, limit, query, sort }
+    if (!req.session.user) {
+        return res.redirect("http://localhost:8080/api/views/login");
+    }
 
     try{
-        let products = await prodManager.getProducts(params)
-        console.log(products)
-        res.render("products", { products })
+        let products = await prodManager.getProducts({})
+        res.render("products", { products , user: req.session.user })
     }catch(error){
         res.status(500).json({ message: error.message })
     }
@@ -61,9 +53,9 @@ router.get('/products', async (req,res) => {
 
 //funcion para mostrar los productos de un carrito
 router.get('/carts/:cid', async (req,res) => {
-    /*if (!req.session.user) {
-        return res.redirect('/login')
-    }*/
+    if (!req.session.user) {
+        return res.redirect("http://localhost:8080/api/views/login")
+    }
 
     const cid = req.params.cid
     try{

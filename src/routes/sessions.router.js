@@ -1,10 +1,10 @@
 
 import { Router } from "express";
-import { SessionManager } from '../Dao/managerDB/SessionManagerMongo.js'
+import { UserManager } from '../Dao/managerDB/UsersManagerMongo.js'
 
 const sessionRouter = Router();
 
-const sessionManager = new SessionManager()
+const userManager = new UserManager()
 
 sessionRouter.get('/', (req, res) => {
     if (!req.session.counter) {
@@ -25,7 +25,7 @@ sessionRouter.get('/', (req, res) => {
       return res.status(400).json({ message: "Todos los campos son requeridos" });
     }
     try {
-      const createdUser = await sessionManager.createUser(req.body);
+      const createdUser = await userManager.createUser(req.body);
       res.status(200).json({ message: "User created", user: createdUser });
     } catch (error) {
       res.status(500).json({ error });
@@ -38,9 +38,9 @@ sessionRouter.get('/', (req, res) => {
       return res.status(400).json({ message: "Todos los campos son requeridos" });
     }
     try {
-      const user = await sessionManager.getUserByEmail(email);
+      const user = await userManager.getUserByEmail(email);
       if (!user) {
-        return res.redirect("/register");
+        return res.redirect("http://localhost:8080/api/views/register");
       }
       const isPasswordValid = password === user.password;
       if (!isPasswordValid) {
@@ -51,17 +51,17 @@ sessionRouter.get('/', (req, res) => {
           ? { email, first_name: user.first_name, isAdmin: true }
           : { email, first_name: user.first_name, isAdmin: false };
       req.session.user = sessionInfo;
-      res.redirect("/profile");
+      res.redirect("http://localhost:8080/api/views/products");
     } catch (error) {
       res.status(500).json({ error });
     }
 
   })
 
-  router.get("/logout", (req, res) => {
+  sessionRouter.get("/logout", (req, res) => {
     req.session.destroy(() => {
-      res.redirect("/login");
+      res.redirect("http://localhost:8080/api/views/login");
     });
   });
   
-  module.exports = sessionRouter
+  export default sessionRouter

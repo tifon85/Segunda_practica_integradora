@@ -1,28 +1,23 @@
 const socketClient = io();
 
 const addToCart = document.getElementById("addToCart");
-const inputIdProduct = document.getElementById("id");
+const inputIdProduct = document.getElementById("idProduct");
 const productsView = document.getElementById("productsView");
 
-let cart
-Swal.fire({
-  title: "Welcome!",
-  confirmButtonText: "Enter",
-}).then(() => {
-  socketClient.emit("newCart");
-});
+//const cart = '657a56cf872c8c6beb4eea99'
+
+/*socketClient.emit("newCart");
 
 socketClient.on("cartID", (idCart) => {
-  cart=idCart
-});
+  cart
+});*/
 
 addToCart.onsubmit = (e) => {
   e.preventDefault();
+  console.log(inputIdProduct)
   const infoProduct = {
-    idCart: cart,
-    idProd: inputIdProduct,
+    idCart: '657a56cf872c8c6beb4eea99',
+    idProd: '6566a95d9ecbe5bbe9189b6c',
   }
-  inputIdProduct.innerText = "";
   socketClient.emit("addProduct", infoProduct);
 };
-

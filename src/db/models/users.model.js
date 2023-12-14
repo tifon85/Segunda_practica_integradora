@@ -20,4 +20,4 @@ const usersSchema = new mongoose.Schema({
   },
 });
 
-export const sessionsModel = mongoose.model('Users', usersSchema)
+export const UsersModel = mongoose.model('Users', usersSchema)

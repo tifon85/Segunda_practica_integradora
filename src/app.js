@@ -3,6 +3,7 @@ import productsRouter from './routes/products.router.js'
 import cartsRouter from './routes/carts.router.js'
 import messagesRouter from './routes/messages.router.js'
 import viewsRouter from './routes/views.router.js'
+import sessionsRouter from './routes/sessions.router.js'
 import { __dirname } from './utils.js'
 import { engine } from 'express-handlebars'
 import { Server } from 'socket.io'
@@ -43,8 +44,8 @@ app.set("view engine", "handlebars");
 app.use('/api/products',productsRouter)
 app.use('/api/carts',cartsRouter)
 app.use('/api/messages',messagesRouter)
+app.use('/api/sessions',sessionsRouter)
 app.use('/api/views',viewsRouter)
-app.use('/api/sessions',viewsRouter)
 
 const httpServer = app.listen(port,(error)=>{
     if(error) console.log(error)
@@ -63,7 +64,6 @@ socketServer.on("connection", async (socket) => {
     const products = await prodManager.getProducts({})
     const messages = await messageManager.getMessage()
 
-    console.log(products)
     //socket productos
     socketServer.emit("products", products);
     socketServer.emit("chat", messages);
@@ -91,15 +91,15 @@ socketServer.on("connection", async (socket) => {
     });
 
     //socket productos carrito
-    socket.on("newCart", async () => {
+    /*socket.on("newCart", async () => {
         const idCart = await cartManager.createCart()
+        console.log(idCart)
         socket.emit("cartID", idCart);
-    });
+    });*/
 
     socket.on("addProduct", async (infoProduct) => {
         console.log(infoProduct)
-        console.log(2)
-        await cartManager.addProductToCart(infoProduct.cartid, infoProduct.productid)
+        await cartManager.addProductToCart(infoProduct.idCart, infoProduct.idProd)
     });
 
     socket.on("getCartProducts", async (idCart) => {

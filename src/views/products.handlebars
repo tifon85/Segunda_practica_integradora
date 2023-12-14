@@ -1,22 +1,30 @@
 
+<h2>WELCOME {{user.first_name}}</h2>
+<h4>Your email is: {{user.email}} </h4>
+
 <h2>LISTA DE PRODUCTOS</h2>
-<div id="productsView"></div>
-  <h4>Página: {{page}} de {{totalPages}}</h4>
+<div id="productsView">
+  <h4>Página: {{products.Page}} de {{products.totalPages}}</h4>
   {{#if products.payload.length }}
       {{#each products.payload}}
-          <h3>Producto:{{title}} - stock:{{stock}} - code:{{code}} - id:{{_id}}</h3>
-          <button type="submit" id="addProduct" value="{{_id}}"><i>Agregar al carrito</i></button>
+          <div>
+              <h3>Producto:{{title}} - stock:{{stock}} - code:{{code}} - id:{{_id}}</h3>
+              <form id="addToCart">
+                  <input type="hidden" id="idProduct" value=${_id}>
+                  <input type="submit" value="Agregar al carrito">
+              </form>
+          </div>
       {{/each}}
   {{else}}
       <p>No products Available</p>
   {{/if}}
 
-  {{#if hasPrevPage }}
-    <a href="{{next}}">Página previa</a>
+  {{#if products.hasPrevPage }}
+    <a href="{{products.next}}">Página previa</a>
   {{/if}}
 
-  {{#if hasNextPage }}
-    <a href="{{prev}}">Página siguiente</a>
+  {{#if products.hasNextPage }}
+    <a href="{{products.prev}}">Página siguiente</a>
   {{/if}} 
 </div>
 
