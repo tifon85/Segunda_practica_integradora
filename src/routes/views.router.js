@@ -37,6 +37,14 @@ router.get("/profile", (req, res) => {
     res.render("profile", { user: req.session.user });
   });
 
+  router.get("/restaurar", (req, res) => {
+    res.render("restaurar");
+  });
+  
+  router.get("/error", (req, res) => {
+    res.render("error");
+  });
+
 router.get('/products', async (req,res) => {
     if (!req.session.user) {
         return res.redirect("http://localhost:8080/api/views/login");

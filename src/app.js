@@ -14,6 +14,8 @@ import { URI } from "./db/configDB.js"
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import MongoStore from "connect-mongo";
+import "./config/passport.config.js";
+import passport from "passport";
 
 const app = express()
 const port = 8080
@@ -29,6 +31,10 @@ app.use(
       cookie: { maxAge: 60000 },
     })
   );
+
+// passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
