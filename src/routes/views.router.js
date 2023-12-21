@@ -7,13 +7,10 @@ const router = Router()
 
 const prodManager = new ProductManager()
 const cartManager = new CartManager()
-const userManager = new UserManager()
-//funcion para mostrar productos desafio anterior
-/*router.get('/products', async (req,res) => {
-    const products = await prodManager.getProducts()
-    console.log(products)
-    res.render("home", { products })
-})*/
+
+router.get('/', async (req, res) => {
+    res.redirect("http://localhost:8080/api/views/login");
+})
 
 router.get('/register', async (req, res) => {
     if (req.session.user) {

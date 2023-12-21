@@ -2,7 +2,7 @@ import passport from "passport";
 import { UserManager } from '../Dao/managerDB/UsersManagerMongo.js'
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GithubStrategy } from "passport-github2";
-import { hashData, compareData } from "./utils.js";
+import { hashData, compareData } from "../utils.js";
 
 const userManager = new UserManager()
 
@@ -20,7 +20,7 @@ passport.use(
             if(!user){
                 //no existe el usuario, entonces lo registramos
                 const hashedPassword = await hashData(password);
-                const createdUser = await usersManager.createOne({
+                const createdUser = await userManager.createUser({
                 ...req.body,
                 password: hashedPassword,
                 });
@@ -51,13 +51,14 @@ passport.use(
             //no existe el usuario
             done(null, false);
           }
-  
+          
           const isPasswordValid = await compareData(password, user.password);
           if (!isPasswordValid) {
             //no es correcta la password
             return done(null, false);
+          }else{
+            return done(null, user);
           }
-          done(null, user);
         } catch (error) {
           done(error);
         }
@@ -70,11 +71,12 @@ passport.use(
     "github",
     new GithubStrategy(
       {
-        clientID: "Iv1.5102287754bdfd53",
-        clientSecret: "ec0aad261cbc70dcff6923bc4dfbb48b160ec586",
+        clientID: "Iv1.80126eb713655d62",
+        clientSecret: "2cb8b4e3729f03b1ae9298fc738f14b99fa237e3",
         callbackURL: "http://localhost:8080/api/sessions/callback",
       },
       async (accessToken, refreshToken, profile, done) => {
+        console.log(profile)
         try {
           const userDB = await userManager.getUserByEmail(profile._json.email);
           // login
@@ -109,7 +111,7 @@ passport.use(
   
   passport.deserializeUser(async (id, done) => {
     try {
-      const user = await usersManager.findById(id);
+      const user = await userManager.getUserById(id);
       done(null, user);
     } catch (error) {
       done(error);
