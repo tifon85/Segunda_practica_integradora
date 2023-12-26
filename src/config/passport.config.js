@@ -24,7 +24,7 @@ passport.use(
                 ...req.body,
                 password: hashedPassword,
                 });
-                done(null, createdUser);
+                return done(null, createdUser);
             }else{
                 //ya existe el usuario
                 return done(null,false)
@@ -43,13 +43,13 @@ passport.use(
       async (email, password, done) => {
         if (!email || !password) {
             //no pueden venir vacios estos campos, son obligatorios
-            done(null, false);
+            return done(null, false);
         }
         try {
           const user = await userManager.getUserByEmail(email);
           if (!user) {
             //no existe el usuario
-            done(null, false);
+            return done(null, false);
           }
           
           const isPasswordValid = await compareData(password, user.password);
@@ -71,32 +71,58 @@ passport.use(
     "github",
     new GithubStrategy(
       {
-        clientID: "Iv1.80126eb713655d62",
-        clientSecret: "2cb8b4e3729f03b1ae9298fc738f14b99fa237e3",
+        clientID: "Iv1.13a3189b9c08c353",
+        clientSecret: "195991909df69574d54fdf2ffb8d7d06e0437d88",
         callbackURL: "http://localhost:8080/api/sessions/callback",
       },
       async (accessToken, refreshToken, profile, done) => {
         console.log(profile)
         try {
-          const userDB = await userManager.getUserByEmail(profile._json.email);
-          // login
-          if (userDB) {
-            if (userDB.isGithub) {
-              return done(null, userDB);
-            } else {
-              return done(null, false);
+          //Si el email es publico, lo registro con el email
+          if(profile._json.email){
+            const userDB = await userManager.getUserByEmail(profile._json.email);
+            // login
+            if (userDB) {
+              if (userDB.isGithub) {
+                return done(null, userDB);
+              } else {
+                return done(null, false);
+              }
             }
+            // signup
+            const infoUser = {
+              first_name: profile._json.name.split(" ")[0] || "Usuario Github", // ['farid','sesin']
+              last_name: profile._json.name.split(" ")[1] || profile.username,
+              email: profile._json.email,
+              password: " ",
+              isGithub: true,
+            };
+            console.log(infoUser)
+            const createdUser = await userManager.createUser(infoUser);
+            return done(null, createdUser);
+          }else{
+            //si el email es privado, lo registro con el ID de github en lugar del email
+            const userDB = await userManager.getUserByEmail(profile.id);
+            // login
+            if (userDB) {
+              if (userDB.isGithub) {
+                return done(null, userDB);
+              } else {
+                return done(null, false);
+              }
+            }
+            // signup
+            const infoUser = {
+              first_name: "Usuario Github",
+              last_name: profile.username,
+              email: profile.id,
+              password: " ",
+              isGithub: true,
+            };
+            console.log(infoUser)
+            const createdUser = await userManager.createUser(infoUser);
+            return done(null, createdUser);
           }
-          // signup
-          const infoUser = {
-            first_name: profile._json.name.split(" ")[0], // ['farid','sesin']
-            last_name: profile._json.name.split(" ")[1],
-            email: profile._json.email,
-            password: " ",
-            isGithub: true,
-          };
-          const createdUser = await userManager.createUser(infoUser);
-          done(null, createdUser);
         } catch (error) {
           done(error);
         }
@@ -106,13 +132,13 @@ passport.use(
 
   passport.serializeUser((user, done) => {
     // _id
-    done(null, user._id);
+    return done(null, user._id);
   });
   
   passport.deserializeUser(async (id, done) => {
     try {
       const user = await userManager.getUserById(id);
-      done(null, user);
+      return done(null, user);
     } catch (error) {
       done(error);
     }

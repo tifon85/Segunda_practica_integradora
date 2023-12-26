@@ -43,7 +43,7 @@ router.get("/profile", (req, res) => {
   });
 
 router.get('/products', async (req,res) => {
-    if (!req.session.user) {
+    if (!req.session.passport) {
         return res.redirect("http://localhost:8080/api/views/login");
     }
 
