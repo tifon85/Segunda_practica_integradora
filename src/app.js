@@ -20,8 +20,9 @@ import passport from "passport";
 const app = express()
 const port = 8080
 
-app.use(cookieParser("SecretCookie"))
+app.use(cookieParser())
 
+//mongo
 app.use(
     session({
         store: new MongoStore({
@@ -40,13 +41,12 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(express.static(__dirname+'/public'))
 
-
+// handlebars
 app.engine("handlebars", engine());
-
 app.set("views", __dirname + "/views");
 app.set("view engine", "handlebars");
 
-
+// routes
 app.use('/api/products',productsRouter)
 app.use('/api/carts',cartsRouter)
 app.use('/api/messages',messagesRouter)

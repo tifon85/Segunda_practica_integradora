@@ -45,6 +45,7 @@ router.post('/:cid/product/:pid', async (req,res) => {
                 res.status(200).json({ message: "Agregado el producto al carrito" })
             }
         }
+        res.redirect("http://localhost:8080/api/views/products")
     }catch(error){
         res.status(500).json({ message: error.message })
     }

@@ -1,6 +1,7 @@
 
 <h2>Bienvenido {{user.first_name}}</h2>
 <h4>Tu email es: {{user.email}} </h4>
+<h4>Tu carrito es: {{user.cart}} </h4>
 
 <h2>LISTA DE PRODUCTOS</h2>
 <div id="productsView">
@@ -9,10 +10,7 @@
       {{#each products.payload}}
           <div>
               <h3>Producto:{{title}} - stock:{{stock}} - code:{{code}} - id:{{_id}}</h3>
-              <form id="addToCart">
-                  <input type="hidden" id="idProduct" value=${_id}>
-                  <input type="submit" value="Agregar al carrito">
-              </form>
+              <button onclick="location.href='/api/carts/{{user.cart}}/product/{{_id}}'">Agregar al carrito</button>
           </div>
       {{/each}}
   {{else}}

@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { ProductManager } from '../Dao/managerDB/ProductManagerMongo.js'
 import { CartManager } from '../Dao/managerDB/CartManagerMongo.js'
-import { UserManager } from '../Dao/managerDB/UsersManagerMongo.js'
+import passport from "passport";
 
 const router = Router()
 
@@ -26,11 +26,11 @@ router.get('/login', (req, res) => {
     res.render("login");
 })
 
-router.get("/profile", (req, res) => {
+router.get("/profile", passport.authenticate("jwt", { session: false }), (req, res) => {
     if (!req.session.user) {
       return res.redirect("http://localhost:8080/api/views/login");
     }
-    console.log(req.session.user);
+    /*console.log(req.session.user);*/
     res.render("profile", { user: req.session.user });
   });
 
@@ -43,11 +43,12 @@ router.get("/profile", (req, res) => {
   });
 
 router.get('/products', async (req,res) => {
-    if (!req.session.passport) {
+    if (!req.session.user) {
         return res.redirect("http://localhost:8080/api/views/login");
     }
 
     try{
+        console.log(req.session.user)
         let products = await prodManager.getProducts({})
         res.render("products", { products , user: req.session.user })
     }catch(error){
