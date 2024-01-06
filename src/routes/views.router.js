@@ -26,7 +26,7 @@ router.get('/login', (req, res) => {
     res.render("login");
 })
 
-router.get("/profile", passport.authenticate("jwt", { session: false }), (req, res) => {
+router.get("/profile", (req, res) => {
     if (!req.session.user) {
       return res.redirect("http://localhost:8080/api/views/login");
     }
